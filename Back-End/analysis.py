@@ -107,9 +107,9 @@ def check_pep8(code):
                 if not (node.left.lineno == node.right.lineno and node.lineno == node.left.lineno):
                     violations.append(f"Line {node.lineno}: Whitespace issue in expression/statement (PEP 8 guideline)")
 
-        if isinstance(node, (ast.Assign, ast.AugAssign)):
-            if len(node.targets) > 1:
-                violations.append(f"Line {node.lineno}: More than one assignment target (PEP 8 guideline)")
+        # if isinstance(node, (ast.Assign, ast.AugAssign)):
+        #     if len(node.targets) > 1:
+        #         violations.append(f"Line {node.lineno}: More than one assignment target (PEP 8 guideline)")
 
     # Check for trailing commas
     for node in ast.walk(tree):
