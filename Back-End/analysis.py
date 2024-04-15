@@ -440,7 +440,8 @@ def calculate_maintainability_index_1(code):
     # Calculate Halstead Volume, Cyclomatic Complexity, and Lines of Code from the AST
     halstead_volume = calculate_halstead_volume(tree)
     cyclomatic_complexity = calculate_cyclomatic_complexity(tree)
-    lines_of_code = code.count('<br/>') + 1
+    # lines_of_code = code.count('<br/>') + 1
+    lines_of_code = len(code.split('\n'))
 
     # Calculate Maintainability Index (MI) using the obtained metrics
     mi = 171 - 5.2 * math.log(halstead_volume) - 0.23 * cyclomatic_complexity - 16.2 * math.log(lines_of_code)
@@ -491,15 +492,9 @@ def calculate_overall_score(code):
     # Calculate maintainability index
     maintainability_index = calculate_maintainability_index_1(code)
 
-
-
-
-
     # Combine scores with weights (adjust weights as needed)
-    overall_score = (syntax_score * 0.2 +
-                     semantic_score * 0.2 +
-                     halstead_volume * 0.2 +
-                     cyclomatic_complexity * 0.2 +
+    overall_score = (halstead_volume * 0.3 +
+                     cyclomatic_complexity * 0.3 +
                      maintainability_index * 0.4)
 
     return overall_score
