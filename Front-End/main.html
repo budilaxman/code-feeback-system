@@ -128,7 +128,7 @@
             // Mock suggestion provided by backend (replace with actual suggestion from backend)
             var suggestion = "";
             var prompt = document.getElementById("output").innerHTML;
-            let url = new URL("http://127.0.0.1:8000/feedback");
+            let url = new URL("https://code-feeback-system.onrender.com/feedback");
             url.searchParams.append('analysis', prompt);
             fetch(url, {
                 method: "POST",
