@@ -99,7 +99,7 @@
         function analyze() {
             // Get the code entered by the user
             var code = document.getElementById("code").value;
-            let url = new URL("http://127.0.0.1:8000/analysis");
+            let url = new URL("https://code-feeback-system.onrender.com/analysis");
             url.searchParams.append('code', code);
             fetch(url, {
                 method: "POST",
@@ -129,7 +129,7 @@
             var suggestion = "";
             var prompt = document.getElementById("output").innerHTML;
             var code = document.getElementById("code").value;
-            let url = new URL("http://127.0.0.1:8000/feedback");
+            let url = new URL("https://code-feeback-system.onrender.com/feedback");
             url.searchParams.append('analysis', prompt+"-------------CODE--------------"+code);
             fetch(url, {
                 method: "POST",
