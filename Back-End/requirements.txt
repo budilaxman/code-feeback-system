@@ -2,7 +2,6 @@ anyio==3.6.2
 asgiref==3.4.1
 backcall==0.2.0
 cachetools==5.3.3
-certifi @ file:///C:/b/abs_35d7n66oz9/croot/certifi_1707229248467/work/certifi
 charset-normalizer==3.3.2
 click==8.0.4
 colorama==0.4.5
