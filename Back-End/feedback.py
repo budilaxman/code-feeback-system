@@ -9,7 +9,8 @@ def gen_feedback(analysis):
     genai.configure(api_key="AIzaSyBwP0R7cwMyQaNWP11eE8RCBnLTeHKE6rI")
     model = genai.GenerativeModel("gemini-1.0-pro")
     prompt = analysis
-    prompt +="Instructions: These are the  errors that i got, give me result and approach how can i improve my code and follow those guidelines that are violated above"
+    prompt +="Instructions: These are the  errors that i got, give me result and approach how can i improve my code and follow those guidelines that are violated above. Also provide me improved code if it its necessary for the above code."
+    print(prompt)
     response = model.generate_content(prompt)
     return response.text
 
