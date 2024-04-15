@@ -387,12 +387,12 @@ def calculate_halstead_volume(tree):
     return halstead_volume
 
 
-def calculate_cyclomatic_complexity(tree):
-    # try:
-    #     tree = ast.parse(code)
-    # except SyntaxError as e:
-    #     print(f"SyntaxError: {e}")
-    #     return None
+def calculate_cyclomatic_complexity(code):
+    try:
+        tree = ast.parse(code)
+    except SyntaxError as e:
+        print(f"SyntaxError: {e}")
+        return None
 
     # Count the number of nodes and edges
     num_nodes = len(tree.body)
