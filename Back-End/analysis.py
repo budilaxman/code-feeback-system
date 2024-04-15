@@ -390,7 +390,7 @@ def calculate_halstead_volume(tree):
 
 class ComplexityVisitor(ast.NodeVisitor):
     def __init__(self):
-        self.complexity = 1  # Start with 1 for the base path
+        self.complexity = 0 # Start with 1 for the base path
 
     def visit_If(self, node):
         self.complexity += 1
