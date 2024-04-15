@@ -388,67 +388,47 @@ def calculate_halstead_volume(tree):
 
 
 
+class ComplexityVisitor(ast.NodeVisitor):
+    def __init__(self):
+        self.complexity = 1  # Start with 1 for the base path
+
+    def visit_If(self, node):
+        self.complexity += 1
+        self.generic_visit(node)
+
+    def visit_For(self, node):
+        self.complexity += 1
+        self.generic_visit(node)
+
+    def visit_While(self, node):
+        self.complexity += 1
+        self.generic_visit(node)
+
+    def visit_ExceptHandler(self, node):
+        self.complexity += 1
+        self.generic_visit(node)
+
+    def visit_With(self, node):
+        self.complexity += 1
+        self.generic_visit(node)
+
+    def visit_Assert(self, node):
+        self.complexity += 1
+        self.generic_visit(node)
+
+    def visit_BoolOp(self, node):
+        self.complexity += 1
+        self.generic_visit(node)
+
+    def visit_comprehension(self, node):
+        self.complexity += 1
+        self.generic_visit(node)
+
 def calculate_cyclomatic_complexity(code):
-    try:
-        parsed_code = ast.parse(code)
-        complexity = 1  # Start with 1 for the default path through the code
-
-        # Function to traverse the AST and calculate complexity
-        def traverse(node):
-            nonlocal complexity
-            if isinstance(node, ast.If):
-                complexity += 1
-                for child_node in ast.walk(node):
-                    if isinstance(child_node, (ast.If, ast.While, ast.For, ast.With)):
-                        complexity += 1
-            elif isinstance(node, (ast.For, ast.While)):
-                complexity += 1
-            elif isinstance(node, ast.Try):
-                complexity += 1
-                for handler in node.handlers:
-                    traverse(handler)
-                if node.finalbody:
-                    complexity -= 1  # Since finally block doesn't add to complexity
-            elif isinstance(node, ast.BoolOp):
-                complexity += 1
-
-        # Start traversing the AST
-        for node in parsed_code.body:
-            traverse(node)
-
-        return complexity
-
-    except SyntaxError:
-        print("Invalid syntax. Please provide valid Python code.")
-        return None
-    try:
-        tree = ast.parse(code)
-    except SyntaxError as e:
-        print(f"SyntaxError: {e}")
-        return None
-
-    # Count the number of nodes and edges
-    num_nodes = len(tree.body)
-    num_edges = 0
-
-    for node in ast.walk(tree):
-        if isinstance(node, ast.For):
-            num_edges += len(node.body) + 2  # Count the loop body plus the loop itself and possible exit
-        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            num_edges += len(node.body)
-
-    # Count the number of connected components (regions)
-    num_regions = 0  # Start with 1 for the main program
-
-    for node in ast.walk(tree):
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            num_regions += 1
-
-    # Calculate cyclomatic complexity
-    cyclomatic_complexity = num_edges - num_nodes + 2 * num_regions
-
-    return cyclomatic_complexity
-
+    tree = ast.parse(code)
+    visitor = ComplexityVisitor()
+    visitor.visit(tree)
+    return visitor.complexity
 
 def calculate_maintainability_index_1(code):
     """
