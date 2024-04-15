@@ -387,7 +387,40 @@ def calculate_halstead_volume(tree):
     return halstead_volume
 
 
+
 def calculate_cyclomatic_complexity(code):
+    try:
+        parsed_code = ast.parse(code)
+        complexity = 1  # Start with 1 for the default path through the code
+
+        # Function to traverse the AST and calculate complexity
+        def traverse(node):
+            nonlocal complexity
+            if isinstance(node, ast.If):
+                complexity += 1
+                for child_node in ast.walk(node):
+                    if isinstance(child_node, (ast.If, ast.While, ast.For, ast.With)):
+                        complexity += 1
+            elif isinstance(node, (ast.For, ast.While)):
+                complexity += 1
+            elif isinstance(node, ast.Try):
+                complexity += 1
+                for handler in node.handlers:
+                    traverse(handler)
+                if node.finalbody:
+                    complexity -= 1  # Since finally block doesn't add to complexity
+            elif isinstance(node, ast.BoolOp):
+                complexity += 1
+
+        # Start traversing the AST
+        for node in parsed_code.body:
+            traverse(node)
+
+        return complexity
+
+    except SyntaxError:
+        print("Invalid syntax. Please provide valid Python code.")
+        return None
     try:
         tree = ast.parse(code)
     except SyntaxError as e:
