@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Quality Analysis Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f3f3;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            /* Added for positioning the suggestion button */
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical;
+        }
+
+        button.analyze-btn {
+            display: block;
+            width: 100%;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        button.suggestion-btn {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -40px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button.suggestion-btn:hover {
+            background-color: #0056b3;
+        }
+
+        #output {
+            margin-top: 20px;
+        }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
+</head>
+
+<body>
+
+    <div class="container flex flex-col justify-center">
+        <h1>Code Quality Analysis Tool</h1>
+        <p>Enter your Python code below:</p>
+        <textarea id="code" class="p-3 font-mono my-3"></textarea>
+        <div class="flex justify-center items-center space-x-3">
+            <button class="bg-blue-500 w-28 text-white py-1 px-2 rounded-md" onclick="analyze()">Run Analysis</button>
+            <button class="bg-blue-500 w-28 text-white py-1 px-2 rounded-md" onclick="showModal();getRuntimeSuggestion();">Suggestion</button>
+        </div>
+        <div id="output"></div>
+    </div>
+    <div class="fixed left-0 top-0 z-10 h-screen w-screen bg-gray-900 bg-opacity-50 flex justify-center items-center hidden"
+        id="suggestion-modal">
+        <div class="bg-white rounded-lg p-4 mx-9 max-w-2xl">
+            <h3 class="font-bold text-xl text-center">Feedback</h3>
+            <p class="h-[40vh] w-full overflow-auto my-5 " id="suggestion">
+                Loading ....
+            </p>
+            <button class="close-btn bg-blue-500 text-white  px-2 py-1 rounded-lg font-bold"
+                onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        function analyze() {
+            // Get the code entered by the user
+            var code = document.getElementById("code").value;
+            let url = new URL("http://127.0.0.1:8000/analysis");
+            url.searchParams.append('code', code);
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            }).then(async function (response) {
+                // console.log(await response.json());
+                const data = await response.json();
+                console.log(data.msg);
+                document.getElementById("output").innerHTML = data.msg;
+                return await response.json();
+            })
+                .catch(err => console.log(err));
+        }
+
+
+        // // Perform analysis using backend API (replace with actual API call)
+        // var analysisResult = performAnalysis(code);
+
+        // // Display analysis results
+        // document.getElementById("output").innerHTML = analysisResult;
+
+
+        function getRuntimeSuggestion() {
+            // Mock suggestion provided by backend (replace with actual suggestion from backend)
+            var suggestion = "";
+            var prompt = document.getElementById("output").innerHTML;
+            let url = new URL("http://127.0.0.1:8000/feedback");
+            url.searchParams.append('analysis', prompt);
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            }).then(async function (response) {
+                // console.log(await response.json());
+                const data = await response.json();
+                console.log(data.msg);
+                suggestion = data.msg;
+                // select suggestion and display it
+                var converter = new showdown.Converter(),
+                    text = suggestion,
+                    html = converter.makeHtml(text);
+                document.getElementById("suggestion").innerHTML = html;
+                // alert(suggestion);
+                // return await response.json();
+            })
+                .catch(err => console.log(err));
+            // Display suggestion
+        }
+
+        function closeModal() {
+            document.getElementById("suggestion-modal").classList.toggle("hidden");
+        }
+
+        function showModal() {
+            document.getElementById("suggestion-modal").classList.toggle("hidden");
+        }
+
+
+
+
+    </script>
+
+</body>
+
+</html>
