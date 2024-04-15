@@ -387,19 +387,34 @@ def calculate_halstead_volume(tree):
     return halstead_volume
 
 
-def calculate_cyclomatic_complexity(code):
-    parsed_code = ast.parse(code)
-    complexity = 1  # Start with 1 for the single path through the function
+def calculate_cyclomatic_complexity(tree):
+    # try:
+    #     tree = ast.parse(code)
+    # except SyntaxError as e:
+    #     print(f"SyntaxError: {e}")
+    #     return None
 
-    for node in ast.walk(parsed_code):
-        if isinstance(node, (ast.If, ast.While, ast.For, ast.Try)):
-            complexity += 1
-        elif isinstance(node, ast.FunctionDef):
-            # Calculate cyclomatic complexity for each function
-            function_complexity = calculate_cyclomatic_complexity(node.body[0])
-            complexity += function_complexity
+    # Count the number of nodes and edges
+    num_nodes = len(tree.body)
+    num_edges = 0
 
-    return complexity
+    for node in ast.walk(tree):
+        if isinstance(node, ast.For):
+            num_edges += len(node.body) + 2  # Count the loop body plus the loop itself and possible exit
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            num_edges += len(node.body)
+
+    # Count the number of connected components (regions)
+    num_regions = 0  # Start with 1 for the main program
+
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            num_regions += 1
+
+    # Calculate cyclomatic complexity
+    cyclomatic_complexity = num_edges - num_nodes + 2 * num_regions
+
+    return cyclomatic_complexity
 
 
 def calculate_maintainability_index_1(code):
